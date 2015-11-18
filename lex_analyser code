@@ -1,0 +1,283 @@
+
+int isnumbr(char name[])	/*Checks Numbers*/
+{
+int len=strlen(name); int i;
+for(i=0;i<len;i++)
+{
+if(name[i]>='0' && name[i]<='9')
+{}
+else
+return 0;
+}
+return 1;
+}
+int isvar(char name[])	/*Checks Variables*/
+{
+int len=strlen(name);  int i;
+if((name[0]>='a' && name[0]<='z') || (name[0]>='A' && name[0]<='Z'))
+{
+for(i=0;i<len;i++)
+{
+if((name[i]>='a' && name[i]<='z') || (name[i]>='A' && name[i]<='Z') || (name[i]>=0 && name[i]<=9) || name[i]=='_' || name[i]=='$'){}
+else
+{return 0;}}}
+else
+{
+return 0;
+}
+return 1;}
+
+void check(char name[],int lineno,int colno)
+{
+FILE *fp1;
+char type[20];
+char valtype[20];
+int tokno;
+fp1=fopen("lex.txt","a");
+if(fp1==NULL)
+{
+printf("Cannot open file");
+getch();
+exit(0);
+}
+
+if (strcmpi(name,"dim")==0)
+{
+strcpy(type,"keyword");
+strcpy(valtype,"-1");
+tokno=1;
+}
+else if (strcmpi(name,"as")==0)
+{
+strcpy(type,"keyword");
+strcpy(valtype,"-1");
+tokno=2;
+}
+else if (strcmpi(name,"lcd")==0)
+{
+strcpy(type,"keyword");
+strcpy(valtype,"-1");
+tokno=3;
+}
+else if (strcmpi(name,"cls")==0)
+{
+strcpy(type,"keyword");
+strcpy(valtype,"-1");
+tokno=4;
+}
+else if (strcmpi(name,"waitms")==0)
+{
+strcpy(type,"keyword");
+strcpy(valtype,"-1");
+tokno=5;
+}
+else if (strcmpi(name,"pwm1b")==0)
+{
+strcpy(type,"keyword");
+strcpy(valtype,"-1");
+tokno=22;
+}
+else if (strcmpi(name,"pwm2a")==0)
+{
+strcpy(type,"keyword");
+strcpy(valtype,"-1");
+tokno=23;
+}
+else if (strcmpi(name,"==")==0)
+{
+strcpy(type,"operator");
+strcpy(valtype,"relational");
+tokno=38;
+}
+
+else if(isnumbr(name)==1)
+{
+strcpy(type,"number");
+strcpy(valtype,"-1");
+tokno=50;
+}
+
+else
+{
+strcpy(type,"unknown");
+strcpy(valtype,"-1");
+tokno=51;
+}
+printf("\n%s\t%s\t%s\t%d\t%d\t%d",name,type,valtype,lineno,colno,tokno);
+fprintf(fp1,"\n%s\t%s\t%s\t%d\t%d\t%d",name,type,valtype,lineno,colno,tokno);
+}
+
+ 
+2. Intermediate Code Generation
+void func()
+{
+	FILE *fp1;
+	FILE *fp2;
+	fp2=fopen("icgout.txt","w");
+	fclose(fp2);
+	fp2=fopen("icgout.txt","a");
+	char type[20];
+	char valtype[20];
+	char temp[50],str[50];
+	char final[100][50][10],word[100];
+	char labels[10][10]={{""},{"Label-1"},{"Label-2"},{"Label-3"},{"Label-4"},{"Label-5"},{"Label-6"}};
+	int tokno,wordno;
+	int line=-1;
+	int len,i=0,k=0;
+	fp1=fopen("code.txt","r");
+	if(fp1==NULL)
+	{
+		printf("Cannot open file");
+		getch();
+		exit(0);
+	}
+	else
+	{
+		while(!feof(fp1))
+		{
+			str[0]=NULL;
+			fgets(str,100,fp1);
+			line++;
+			wordno=0;
+			//printf("\nString: %s",str);
+			len=strlen(str);
+			i=0;
+			while(i<len-1)
+			{
+				k=0;
+				while( (i<len) && (str[i]!=' ') && (str[i]!=';') )
+				{
+					temp[k]=str[i];
+					k++;
+					i++;
+				}
+				temp[k]=NULL;
+				i++;
+				strcpy(final[line][wordno],temp);
+			   fprintf(fp2,"%s = temp%d",final[i][0],tempcount+1);
+			   fprintf(fp2,"\n");
+			}
+
+			else if(strcmp(final[i][0],"for")==0)
+			{
+			   tempcount++;
+			   printf("%s=%s\n",final[i][1],final[i][3]);
+			   printf("temp%d = %s > %s\n",tempcount,final[i][1],final[i][5]);
+			   printf("%s:\n",labels[tempcount]);
+			   printf("if temp%d = false then goto %s\n",tempcount,labels[tempcount+1]);
+			   printf("Increase temp%d",tempcount);
+			   printf("\n");
+			   fprintf(fp2,"%s=%s\n",final[i][1],final[i][3]);
+			   fprintf(fp2,"temp%d = %s > %s\n",tempcount,final[i][1],final[i][5]);
+			   fprintf(fp2,"%s:\n",labels[tempcount]);
+			   fprintf(fp2,"if temp%d = false then goto %s\n",tempcount,labels[tempcount+1]);
+			   fprintf(fp2,"Increase temp%d",tempcount);
+			   fprintf(fp2,"\n");
+			   i++;
+			   for(int k=i;k<line;k++)
+			   {
+				   if(strcmp(final[k][0],"next")==0)
+				   {						strcpy(final[k][0],labels[++tempcount]);
+						strcat(final[k][0],":");
+						word[k]=word[k]-1;				
+					   break;
+				   }
+				   else
+				   {
+					   for(int j=0;j<word[i];j++)
+						{
+							if(strcmp(final[i][0],"end")!=0)
+							{
+							printf("%s ",final[i][j]);
+							fprintf(fp2,"%s ",final[i][j]);
+							}
+						}
+
+				   }
+			   }
+			}
+		}
+	}
+	fclose(fp2);
+}
+
+3. Code Generation & Optimization
+
+#include<stdio.h>
+#include<string.h>
+#include<conio.h>
+#include<stdlib.h>
+#include<math.h>
+void createfile()
+{
+FILE *fp2;
+fp2=fopen("botcontr.c","w");
+fclose(fp2);
+}
+void endfile()
+{
+FILE *fp2;
+fp2=fopen("botcontr.c","a");
+//fprintf(fp2,"#include<stdio.h>\n#include<math.h>\n#include<string.h>\n#include<conio.h>\n#include<stdlib.h>\n");
+fprintf(fp2,"}\n");
+fclose(fp2);
+}
+
+void main()
+{
+	FILE *fp1;
+	FILE *fp2;
+	char type[20];
+	char valtype[20];
+	char temp[50],str[50];
+	char final[100][50][10],word[100];
+	char vartab[20][2][10];
+	int vartabcounter=0;
+	int tokno,wordno;
+	int line=-1;
+	int len,i=0,k=0;
+	fp1=fopen("codebot.txt","r");
+	fp2=fopen("botcontr.c","a");
+	createfile();
+	headers();
+	if(fp1==NULL)
+	{
+		printf("Cannot open file");
+		getch();
+		exit(0);
+	}
+	else
+	{
+		while(!feof(fp1))
+		{
+			str[0]=NULL;
+			fgets(str,100,fp1);
+			line++;
+			wordno=0;
+			//printf("\nString: %s",str);
+			len=strlen(str);
+			i=0;
+			while(i<len-1)
+			{
+				k=0;
+				while( (i<len) && (str[i]!=' ') && (str[i]!=';') )
+				{
+					temp[k]=str[i];
+					k++;
+					i++;
+				}
+				temp[k]=NULL;
+				i++;
+				strcpy(final[line][wordno],temp);
+				printf("%s ",final[line][wordno]);
+				wordno++;
+				word[line]=wordno;
+			}
+			printf("\n");
+		}
+		char tempo='%';
+		
+	}
+	fclose(fp2);
+	endfile();
+}
