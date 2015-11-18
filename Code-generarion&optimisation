@@ -1,0 +1,113 @@
+Code Generation 
+
+#include<stdio.h>
+#include<math.h>
+#include<string.h>
+#include<conio.h>
+#include<stdlib.h>
+void main()
+{
+int loopvar=0;
+int a ;
+int b ;
+char i[50] ;
+int c ;
+int f ;
+a = 10 ;
+b = 2 ;
+strcpy(i,"dude!!!") ;
+c = pow(a,b);
+c = pow(c,b);
+c = pow(a,b);
+c = pow(c,f);
+c = pow(c,f);
+c = a * b ;
+c = a * b * c ;
+printf("%s",i);
+printf("%d\n",c);
+if (a != 1)
+{
+printf("%d\n",a);
+}
+else
+{
+printf("%d\n",b);
+}
+printf("%d\n",a);
+printf("%d\n",b);
+printf("%d\n",a);
+for( a = 1 ; a <= 10 ; a++)
+{
+if (a < 5)
+{
+printf("%d\n",a);
+}
+}
+getch();
+}
+Code Optimization 
+
+#include<stdio.h>
+#include<math.h>
+#include<string.h>
+#include<conio.h>
+#include<stdlib.h>
+void main()
+{
+int loopvar=0;
+int a ;
+int b ;
+char i[50] ;
+int c ;
+int f ;
+a = 10 ;
+b = 2 ;
+strcpy(i,"dude!!!") ;
+c = a;
+for (loopvar=1;loopvar<b;loopvar++)
+{
+c = c * a;
+}
+c = c * a;
+for (loopvar=1;loopvar<b;loopvar++)
+{
+c = c * a;
+}
+c = a;
+for (loopvar=1;loopvar<b;loopvar++)
+{
+c = c * a;
+}
+c = c * a;
+for (loopvar=1;loopvar<f;loopvar++)
+{
+c = c * a;
+}c = a * b ;
+c = a * b * c ;
+
+printf("%s",i);
+printf("%d\n",c);
+if (a != 1)
+{
+printf("%d\n",a);
+}
+else
+{
+printf("%d\n",b);
+}
+
+printf("%d\n",a);
+printf("%d\n",b);
+printf("%d\n",a);
+for(loopvar=10;loopvar>=1;loopvar--)
+{
+a=10-loopvar+1;
+if (a < 5)
+{
+printf("%d\n",a);
+}
+}
+getch();
+}
+
+
